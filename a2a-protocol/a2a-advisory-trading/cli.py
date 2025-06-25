@@ -1,4 +1,5 @@
 import os
+import sys
 import asyncio
 import boto3
 import json
@@ -522,7 +523,17 @@ async def send_request(api_url: str, question: str, log_streamer: LogStreamReade
 async def main():
     try:
         print_banner()
-        api_id = input(Fore.CYAN + "Enter your Portfolio Manager API Gateway ID (e.g., abc123xyz): ").strip()
+        
+        # Check for API ID in order: command line arg, env var, then prompt
+        if len(sys.argv) > 1:
+            api_id = sys.argv[1].strip()
+            print(Fore.GREEN + f"✓ Using API ID from command line: {api_id}")
+        elif os.environ.get("PORTFOLIO_MANAGER_API_ID"):
+            api_id = os.environ.get("PORTFOLIO_MANAGER_API_ID").strip()
+            print(Fore.GREEN + f"✓ Using API ID from environment variable: {api_id}")
+        else:
+            api_id = input(Fore.CYAN + "Enter your Portfolio Manager API Gateway ID (e.g., abc123xyz): ").strip()
+        
         if not api_id:
             print(Fore.RED + "❌ API ID is required.")
             return

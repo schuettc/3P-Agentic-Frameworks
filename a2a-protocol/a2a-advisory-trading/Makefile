@@ -38,7 +38,7 @@ deploy-core:
 	@rm -rf $(LAYER_DIR)
 	@mkdir -p $(LAYER_DIR)
 	@cp -r $(CORE_DIR) $(LAYER_DIR)/
-	@pip install --platform manylinux2014_aarch64 \
+	@python3 -m pip install --platform manylinux2014_aarch64 \
 		--implementation cp \
 		--python-version 3.12 \
 		--only-binary=:all: \
