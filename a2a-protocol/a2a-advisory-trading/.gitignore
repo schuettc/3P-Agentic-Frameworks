@@ -1,2 +1,16 @@
-iac/
+# Python
 venv/
+__pycache__/
+*.pyc
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Build artifacts
+iac/agents/layers/python/
+iac/agents/layers/*.zip
+iac/agents/*/lambda/*.zip
+response.json
