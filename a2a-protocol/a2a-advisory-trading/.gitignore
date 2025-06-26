@@ -2,6 +2,14 @@
 venv/
 __pycache__/
 *.pyc
+.env
+*.egg-info/
+dist/
+build/
+
+# Poetry
+poetry.lock
+.venv/
 
 # Terraform
 *.tfstate
@@ -14,3 +22,5 @@ iac/agents/layers/python/
 iac/agents/layers/*.zip
 iac/agents/*/lambda/*.zip
 response.json
+
+CLAUDE.md

@@ -20,7 +20,8 @@ This project serves as a reference implementation demonstrating how to design an
   - [Installation](docs/main/solution_deployment.md#installation)
   - [Deployment Prerequisites](docs/main/solution_deployment.md#deployment-pre-requisite)
   - [Deployment Steps](docs/main/solution_deployment.md#deployment-steps)
-  - [Using the CLI](docs/main/solution_deployment.md#using-the-cli)
+  - [Using the Streamlit Web Interface](docs/main/solution_deployment.md#using-the-streamlit-web-interface)
+  - [Using the Streamlit Web Interface](#streamlit-web-interface)
   - [Testing Agents Logic](docs/main/solution_deployment.md#testing-agents-logic)
   - [Service Quota for API Gateway Integration](docs/main/solution_deployment.md#service-quota-for-api-gateway-integration)
 - [Developer Guide](docs/main/development_guide.md)
@@ -106,7 +107,7 @@ The registry logic in `agent_registry.py` checks the environment, and if dynamic
 This design allows seamless agent discovery in both single-account (fully automated) and multi-account (manual/static) scenarios.
 
 #### Task Delegation and Lifecycle 
-When a user submits a request (via cli.py), the Portfolio Manager creates a new Task object, decomposes it into subtasks (Market Analysis, Risk Assessment, Trade Execution), and delegates each to the correct agent using HTTP requests. Task states progress from submitted → in-progress → completed or failed. The PM waits for sub-agent responses, handles missing information or errors, and, for trades, prompts the user for confirmation before final execution. All interactions, results, and status changes are tracked and auditable.
+When a user submits a request (via the Streamlit web interface), the Portfolio Manager creates a new Task object, decomposes it into subtasks (Market Analysis, Risk Assessment, Trade Execution), and delegates each to the correct agent using HTTP requests. Task states progress from submitted → in-progress → completed or failed. The PM waits for sub-agent responses, handles missing information or errors, and, for trades, prompts the user for confirmation before final execution. All interactions, results, and status changes are tracked and auditable.
 
 ### Lightweight Serverless Architecture
 
@@ -185,10 +186,48 @@ a2a-advisory-trading/
 │ │ ├── lambda.tf
 │ │ ├── outputs.tf
 │ │ └── variables.tf
-├── cli.py                                # CLI interface for the project
+├── streamlit_app.py                      # Streamlit web interface for the project
+├── streamlit_app.py                      # Streamlit web interface
+├── requirements.txt                      # Python dependencies
+├── pyproject.toml                        # Poetry configuration
+├── STREAMLIT_README.md                   # Streamlit app documentation
 ├── Makefile                              # Make commands and global variables for deployment
 └── README.md
 ```
+
+## Streamlit Web Interface
+
+The primary interface for this application is a modern web interface built with Streamlit, providing a user-friendly experience for trading advisory interactions.
+
+### Features
+- 💬 Natural language chat interface for trading requests
+- 📊 Post-execution CloudWatch log analysis and download
+- ✅ Interactive trade confirmation workflow with validation
+- 🔍 Real-time agent activity tracking and status indicators
+- 📈 Formatted display of analysis results with structured sections
+- 🔗 Direct links to AWS resources and debug mode
+
+### Quick Start
+```bash
+# Install with Poetry (recommended)
+cd 3P-Agentic-Frameworks/a2a-protocol/a2a-advisory-trading
+poetry install
+poetry run streamlit run streamlit_app.py
+
+# Or with pip
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+The web interface will be available at `http://localhost:8501`
+
+### Prerequisites
+- Python 3.12 or higher
+- AWS credentials configured
+- Deployed A2A infrastructure
+- `.env` file with required configuration
+
+For detailed instructions, setup guide, and troubleshooting, see [STREAMLIT_README.md](STREAMLIT_README.md)
 
 ## Demo
 

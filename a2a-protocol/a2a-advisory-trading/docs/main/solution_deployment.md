@@ -10,7 +10,7 @@ The application follows a serverless-first architecture deployed on AWS:
 - [Installation](#installation)
 - [Deployment Pre-requisite](#deployment-pre-requisite)
 - [Deployment Steps](#deployment-steps)
-- [Using the CLI](#using-the-cli)
+- [Using the Streamlit Web Interface](#using-the-streamlit-web-interface)
 - [Testing Agents Logic](#testing-agents-logic)
 - [Service Quota](#service-quota-for-api-gateway-integration)
 - [Solutions Adoption](#solution-adoption)
@@ -38,20 +38,24 @@ cd 3P-Agentic-Frameworks/a2a-protocol/a2a-advisory-trading
 - [PIP >= 25.0.1](https://pypi.org/project/pip/)
 - [make](https://www.gnu.org/software/make/)
 - On the Console, make sure Amazon BedRock has enabled access to `Claude 3.5 Haiku`
-- Set up Python virtual environment and install dependencies:
+- Install Poetry (if not already installed):
 
 ```bash
-# Create virtual environment
-python3 -m venv venv
+# Install Poetry
+curl -sSL https://install.python-poetry.org | python3 -
 
-# Activate virtual environment
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
+# Or using pip
+pip install poetry
+```
 
-# Install required packages
-pip install pyfiglet colorama halo aiohttp boto3
+- Install project dependencies:
+
+```bash
+# Install all dependencies using Poetry
+poetry install
+
+# This will create a virtual environment and install all dependencies
+# defined in pyproject.toml, including CLI and Streamlit requirements
 ```
 
 - Export environment variables:
@@ -123,76 +127,66 @@ make destroy-core
 
 ---
 
-Once the infrastructure has been set up, run the following command at the project root to start the program:
+Once the infrastructure has been set up, you can access the system through the Streamlit web interface.
+
+## Using the Streamlit Web Interface
+
+### Step 1: Configure Environment Variables
+
+Create a `.env` file in the project root with your configuration:
 
 ```bash
-# Make sure virtual environment is activated
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
+# Required configuration
+AWS_REGION=us-east-1    # Or your deployment region
+APP_NAME=adt            # Must match your deployment
+ENV_NAME=dev            # Must match your deployment
 
-# Run the CLI
-python cli.py
-```
-
-## Using the CLI
-
-**Step 1**: After deployment are completed for all Terraform modules, you can get the Portfolio Manager API ID using one of these methods:
-
-**Option A - Using Terraform (Recommended):**
-
-```bash
-# Get the Portfolio Manager API ID from the project root
-grep -o "https://[^\"]*execute-api[^\"]*" iac/agents/portfolio_manager/terraform.tfstate | head -1 | cut -d'/' -f3 | cut -d'.' -f1
-
-# Store it as an environment variable for future use
+# Optional: Pre-configure the API ID to skip auto-discovery
+# You can get this from Terraform output or AWS Console
 export PORTFOLIO_MANAGER_API_ID=$(grep -o "https://[^\"]*execute-api[^\"]*" iac/agents/portfolio_manager/terraform.tfstate | head -1 | cut -d'/' -f3 | cut -d'.' -f1)
 ```
 
-**Option B - Using AWS Console:**
+### Step 2: Launch the Streamlit Application
 
-- Log into the console > Choose `API Gateway`service
-- The list of deployed API IDs will be shown to user
-
-![A2A Advisory Trading API Gateway](../images/adt-api-ids.png)
-
-Save or remember the API ID of Portfolio Manager. This is the information you need to start your CLI testing.
-
-**Step 2**: Start the CLI
-
-Navigate to the project root directory: `cd path/to/a2a-advisory-trading`
-
-You can run the CLI in two ways:
-
-**Option A - Using environment variable (Recommended):**
+Navigate to the project root directory and run:
 
 ```bash
-# If you've set the environment variable
-python cli.py
+# Using Poetry (recommended)
+poetry run streamlit run streamlit_app.py
 
-# Or pass it directly
-python cli.py $PORTFOLIO_MANAGER_API_ID
+# Or if you're in a Poetry shell
+poetry shell
+streamlit run streamlit_app.py
 ```
 
-**Option B - Pass API ID as argument:**
+The application will automatically open in your browser at `http://localhost:8501`
 
-```bash
-# Get API ID and run CLI in one command
-python cli.py $(grep -o "https://[^\"]*execute-api[^\"]*" iac/agents/portfolio_manager/terraform.tfstate | head -1 | cut -d'/' -f3 | cut -d'.' -f1)
+### Step 3: Using the Web Interface
 
-# Or if you already know the API ID
-python cli.py xxxxxxxxxx
-```
+1. **Automatic API Discovery**: The app will automatically discover your Portfolio Manager API endpoint using AWS APIs
+2. **Chat Interface**: Enter your trading requests in natural language
+3. **Agent Activity**: Watch real-time indicators showing which agents are processing
+4. **Log Analysis**: After execution, view detailed logs from all agents
+5. **Trade Confirmation**: For trade requests, use the interactive form to confirm details
 
-**Option C - Interactive mode:**
+### Features
 
-```bash
-python cli.py
-# When prompted, enter the API Gateway ID for the Portfolio Manager service
-```
+- 💬 Natural language chat interface
+- 📊 Post-execution log analysis  
+- ✅ Interactive trade confirmation
+- 🔍 Agent activity tracking
+- 📈 Formatted analysis results
+- 🔗 Debug mode for developers
 
-![A2A Advisory Trading API Gateway](../images/adt-enter-api-ids.png)
+### Troubleshooting
+
+If the app cannot auto-discover the API:
+
+1. **Check AWS Credentials**: Ensure your AWS CLI is configured properly
+2. **Verify Deployment**: Confirm all agents are deployed successfully
+3. **Manual Configuration**: Set `PORTFOLIO_MANAGER_API_ID` in your `.env` file
+
+For detailed instructions, see [STREAMLIT_README.md](../../STREAMLIT_README.md)
 
 ## Testing Agents Logic
 

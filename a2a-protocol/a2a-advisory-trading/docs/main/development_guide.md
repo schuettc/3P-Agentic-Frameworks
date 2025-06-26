@@ -32,7 +32,7 @@ git clone https://github.com/aws-samples/3P-Agentic-Frameworks.git
 
 - Navigate to the project root directory (`a2a-advisory-trading/`): 
 ```
-cd a2a-protocols/a2a-advisory-trading
+cd 3P-Agentic-Frameworks/a2a-protocol/a2a-advisory-trading
 ```
 
 ## Local Setup Pre-requisite
@@ -40,27 +40,23 @@ cd a2a-protocols/a2a-advisory-trading
 * [Python >= 3.12](https://www.python.org/downloads/)
 * [PIP >= 25.0.1](https://pypi.org/project/pip/)
 * On the Console, make sure Amazon BedRock has enabled access to your model of choice
-* Install uvicorn
-```python
-pip install uvicorn
-```
-* Install the requirements.txt for agents' dependencies:
-```python
-pip install -r iac/a2a_core/requirements.txt
-```
-* Install the following libraries for the CLI start:
-```python
-pip install pyfiglet colorama halo aiohttp boto3
-```
-* (Optional) Create and activate a virtual environment:
-```
-# For macOS/Linux
-python -m venv venv
-source venv/bin/activate
+* Install Poetry (if not already installed):
+```bash
+# Install Poetry
+curl -sSL https://install.python-poetry.org | python3 -
 
-# For Windows
-python -m venv venv
-.\venv\Scripts\activate
+# Or using pip
+pip install poetry
+```
+
+* Install all project dependencies using Poetry:
+```bash
+# This will create a virtual environment and install all dependencies
+# including uvicorn, agent dependencies, and Streamlit
+poetry install
+
+# Activate the Poetry shell
+poetry shell
 ```
 
 * Create the `.env` in the project root directory (`a2a-advisory-trading/`) file with the following information:
@@ -185,9 +181,25 @@ uvicorn local_server_pm:app --reload --port 8003
 
 ## Testing agents
 
-Once the servers are up and running, we can test each individual agent server either using the interactive custom cli or curl command.
+Once the servers are up and running, you can test the system using the Streamlit web interface or test individual agent servers directly using curl commands.
 
-#### Testing with curl commands 
+### Testing with Streamlit Web Interface
+
+For local development testing with Streamlit:
+
+1. Ensure all local servers are running (see [Running the Servers](#running-the-servers))
+2. Update your `.env` file to point to local endpoints:
+   ```bash
+   ENV_NAME=local
+   # The app will automatically use localhost URLs for local environment
+   ```
+3. Launch Streamlit:
+   ```bash
+   poetry run streamlit run streamlit_app.py
+   ```
+4. The interface will connect to your local agent servers at `http://localhost:8000-8003`
+
+### Testing with curl commands 
 
 During agent development, using CURL commands provides a direct and efficient way to test individual agent endpoints without relying on the Portfolio Manager's routing logic. This approach is particularly useful when:
 

@@ -1,0 +1,59 @@
+[tool.poetry]
+name = "a2a-advisory-trading"
+version = "0.1.0"
+description = "A serverless multi-agent trading advisory system with Streamlit web interface"
+authors = ["A2A Advisory Trading Team"]
+readme = "README.md"
+packages = [{include = "iac/a2a_core"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.40.0"
+boto3 = "^1.34.0"
+aiohttp = "^3.11.13"
+pyfiglet = "^1.0.2"
+colorama = "^0.4.6"
+plotly = "^5.24.0"
+pandas = "^2.2.0"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+black = "^24.8.0"
+flake8 = "^7.1.0"
+mypy = "^1.11.0"
+pre-commit = "^3.8.0"
+
+[tool.poetry.scripts]
+cli = "cli:main"
+streamlit-app = "streamlit.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | venv
+)/
+'''
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
